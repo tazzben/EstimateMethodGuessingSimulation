@@ -56,7 +56,7 @@ def Gamma(x, gprob):
 	rl = x['rl']
 	nl = x['nl']
 	numoptions = 1/gprob
-	if numoptions >= 1:
+	if numoptions >= 1 and ((numoptions-1)**2) != 0:
 		egamma = (numoptions*(nl+pl*numoptions+rl-1))/((numoptions-1)**2)
 		return egamma
 	else:
@@ -68,11 +68,31 @@ def GammaGain(x, gprob):
 	rl = x['rl']
 	nl = x['nl']
 	numoptions = 1/gprob
-	if numoptions >= 1:
+	if numoptions >= 1 and ((numoptions-1)*(nl+rl-1)) != 0:
 		egamma = (1-nl-pl*numoptions-rl)/((numoptions-1)*(nl+rl-1))
 		return egamma
 	else:
 		return None
+
+def ZeroGamma(x):
+	if (x['nl']+x['pl']+x['rl']-1) != 0:
+		ezgamma = -1*(((x['nl']-x['pl'])*(x['pl']+x['rl']-1))/(x['nl']+x['pl']+x['rl']-1))
+		return ezgamma
+	else:
+		return None
+		
+def ZeroGammaGain(x):
+	if (1-x['nl']-x['rl']) != 0:
+		ezgamma = (x['pl']-x['nl'])/(1-x['nl']-x['rl'])
+		return ezgamma
+	else:
+		return None
+		
+def CGammaGain(x):
+	if (1-x['mu']) != 0:
+		return x['gamma']/(1-x['mu'])
+	else:
+		return None		
 
 def GetStudents(mu, q, n, alpha, gamma):
 	studentability = numpy.random.binomial(q, mu, size=n)
@@ -98,6 +118,7 @@ def GetStudents(mu, q, n, alpha, gamma):
 
 
 def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
+	gammagainc = gamma/(1-mu)
 	questions = pd.DataFrame(columns=('id','question', 'pl', 'zl', 'rl', 'nl', 'gamma','alpha','mu','gammagain','egamma','egammagain','engamma','engammagain'))
 	classes = pd.DataFrame(columns=('id','pl', 'zl', 'rl', 'nl', 'gamma','alpha','mu','gammagain','egamma','egammagain','engamma','engammagain'))
 	for i in range(reps):
@@ -111,11 +132,11 @@ def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
 		d = sqldf('SELECT question, AVG(pl) AS pl, AVG(zl) AS zl, AVG(rl) AS rl, AVG(nl) AS nl, AVG(gamma) AS gamma, AVG(alpha) AS alpha, AVG(mu) AS mu FROM students GROUP BY question',locals())
 		df = pd.DataFrame(d)
 		df['id'] = i
-		df['gammagain'] = df['gamma']/(1-df['mu'])
+		df['gammagain'] = df.apply(CGammaGain,axis=1)
 		df['egamma'] = df.apply(Gamma,args=(gprob,),axis=1)
 		df['egammagain'] = df.apply(GammaGain,args=(gprob,),axis=1)
-		df['engamma'] = -1*(((df['nl']-df['pl'])*(df['pl']+df['rl']-1))/(df['nl']+df['pl']+df['rl']-1))
-		df['engammagain'] = (df['pl']-df['nl'])/(1-df['nl']-df['rl'])
+		df['engamma'] = df.apply(ZeroGamma,axis=1)
+		df['engammagain'] = df.apply(ZeroGammaGain,axis=1)
 		questions = questions.append(df, ignore_index=True)
 		d = sqldf('SELECT id, AVG(pl) AS pl, AVG(zl) AS zl, AVG(rl) AS rl, AVG(nl) AS nl, AVG(gamma) AS gamma, AVG(alpha) AS alpha, AVG(mu) AS mu, AVG(gammagain) AS gammagain, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain FROM df',locals())
 		df2 = pd.DataFrame(d)
@@ -123,44 +144,44 @@ def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
 	
 	questions['esq'] = (questions['gamma'] - questions['egamma'])**2
 	questions['eabs'] = (questions['gamma'] - questions['egamma']).abs()
-	questions['eper'] = ((questions['gamma'] - questions['egamma'])/questions['gamma'])
+	questions['eper'] = ((questions['gamma'] - questions['egamma'])/gamma)
 	questions['eperabs'] = questions['eper'].abs()
 	questions['epersq'] = (questions['eper'])**2
 	questions['egainsq'] = (questions['gammagain'] - questions['egammagain'])**2
 	questions['egainabs'] = (questions['gammagain'] - questions['egammagain']).abs()
-	questions['egainper'] = ((questions['gammagain'] - questions['egammagain'])/questions['gammagain'])
+	questions['egainper'] = ((questions['gammagain'] - questions['egammagain'])/gammagainc)
 	questions['egainperabs'] = questions['egainper'].abs()
 	questions['egainpersq'] = (questions['egainper'])**2
 	
-	questions['eperzero'] = ((questions['gamma'] - questions['engamma'])/questions['gamma'])
+	questions['eperzero'] = ((questions['gamma'] - questions['engamma'])/gamma)
 	questions['eperzeroabs'] = questions['eperzero'].abs()
 	questions['eperzerosq'] = (questions['eperzero'])**2	
 	questions['esqzero'] = (questions['gamma'] - questions['engamma'])**2
 	questions['eabszero'] = (questions['gamma'] - questions['engamma']).abs()
 	questions['egainsqzero'] = (questions['gammagain'] - questions['engammagain'])**2
 	questions['egainabszero'] = (questions['gammagain'] - questions['engammagain']).abs()
-	questions['egainperzero'] = ((questions['gammagain'] - questions['engammagain'])/questions['gammagain'])
+	questions['egainperzero'] = ((questions['gammagain'] - questions['engammagain'])/gammagainc)
 	questions['egainperzeroabs'] = questions['egainperzero'].abs()
 	questions['egainperzerosq'] = (questions['egainperzero'])**2
 	
-	classes['eper'] = ((classes['gamma'] - classes['egamma'])/classes['gamma'])
+	classes['eper'] = ((classes['gamma'] - classes['egamma'])/gamma)
 	classes['eperabs'] = classes['eper'].abs()
 	classes['epersq'] = (classes['eper'])**2
 	classes['esq'] = (classes['gamma'] - classes['egamma'])**2
 	classes['eabs'] = (classes['gamma'] - classes['egamma']).abs()
 	classes['egainsq'] = (classes['gammagain'] - classes['egammagain'])**2
 	classes['egainabs'] = (classes['gammagain'] - classes['egammagain']).abs()
-	classes['egainper'] = ((classes['gammagain'] - classes['egammagain'])/classes['gammagain'])
+	classes['egainper'] = ((classes['gammagain'] - classes['egammagain'])/gammagainc)
 	classes['egainpersq'] = (classes['egainper'])**2
 	classes['egainperabs'] = classes['egainper'].abs()
-	classes['eperzero'] = ((classes['gamma'] - classes['engamma'])/classes['gamma'])
+	classes['eperzero'] = ((classes['gamma'] - classes['engamma'])/gamma)
 	classes['eperzeroabs'] = classes['eperzero'].abs()
 	classes['eperzerosq'] = (classes['eperzero'])**2
 	classes['esqzero'] = (classes['gamma'] - classes['engamma'])**2
 	classes['eabszero'] = (classes['gamma'] - classes['engamma']).abs()
 	classes['egainsqzero'] = (classes['gammagain'] - classes['engammagain'])**2
 	classes['egainabszero'] = (classes['gammagain'] - classes['engammagain']).abs()
-	classes['egainperzero'] = ((classes['gammagain'] - classes['engammagain'])/classes['gammagain'])
+	classes['egainperzero'] = ((classes['gammagain'] - classes['engammagain'])/gammagainc)
 	classes['egainperzeroabs'] = classes['egainperzero'].abs()
 	classes['egainperzerosq'] = (classes['egainperzero'])**2 
 	
@@ -187,14 +208,14 @@ if __name__ == '__main__':
 #	alphalist = [.01, .03, .05, .07, .09]
 #	gammalist = [.1, .3, .5]
 #	problist = [.15, .2, .25, .3, .35, .50]
-#	studs = [15, 30, 50, 100]
+#	studs = [30, 50, 100]
 #	reps = 10000
 	
 	mulist = [.1, .3,]
 	alphalist = [.01,]
 	gammalist = [.1,]
 	problist = [.15,]
-	studs = [15, ]
+	studs = [30,]
 	reps = 10
 
 	questions = 30
@@ -211,7 +232,8 @@ if __name__ == '__main__':
 	p.close()
 	p.join()
 	keys = r[0].keys()
+	fields = ['mu','alpha','gamma','prob','studs','ClassEstSq','ClassEstAbs','ClassEstGainSq','ClassEstGainAbs','ClassEstZeroSq','ClassEstZeroAbs','ClassEstGainZeroSq','ClassEstGainZeroAbs','EstGamma','EstGammaGain','EstGammaZero','EstGammaGainZero','AvgGamma','AvgGammaGain','QuestionEstSq','QuestionEstAbs','QuestionEstGainSq','QuestionEstGainAbs','QuestionEstZeroSq','QuestionEstZeroAbs','QuestionEstGainZeroSq','QuestionEstGainZeroAbs','ClassEstGammaAvgPercentChange','ClassEstGammaAvgAbsPercentChange','ClassEstGammaAvgSqPercentChange','ClassEstGainAvgPercentChange','ClassEstGainAvgAbsPercentChange','ClassEstGainAvgSqPercentChange','ClassEstGammaZeroAvgPercentChange','ClassEstGammaZeroAvgAbsPercentChange','ClassEstGammaZeroAvgSqPercentChange','ClassEstGainZeroAvgPercentChange','ClassEstGainZeroAvgAbsPercentChange','ClassEstGainZeroAvgSqPercentChange','QuestionEstGammaAvgPercentChange','QuestionEstGammaAvgAbsPercentChange','QuestionEstGammaAvgSqPercentChange','QuestionEstGainAvgPercentChange','QuestionEstGainAvgAbsPercentChange','QuestionEstGainAvgSqPercentChange','QuestionEstGammaZeroAvgPercentChange','QuestionEstGammaZeroAvgAbsPercentChange','QuestionEstGammaZeroAvgSqPercentChange','QuestionEstGainZeroAvgPercentChange','QuestionEstGainZeroAvgAbsPercentChange','QuestionEstGainZeroAvgSqPercentChange']
 	with open('results.csv', 'w') as output_file:
-		dict_writer = csv.DictWriter(output_file, keys)
+		dict_writer = csv.DictWriter(output_file, fieldnames=fields)
 		dict_writer.writeheader()
 		dict_writer.writerows(r)
