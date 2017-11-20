@@ -204,19 +204,19 @@ def ManageProcess(row):
 	
 
 if __name__ == '__main__':
-#	mulist = [.1, .3, .5, .7]
-#	alphalist = [.01, .03, .05, .07, .09]
-#	gammalist = [.1, .3, .5]
-#	problist = [.15, .2, .25, .3, .35, .50]
-#	studs = [30, 50, 100]
-#	reps = 10000
+	mulist = [.1, .3, .5, .7]
+	alphalist = [.01, .03, .05, .07, .09]
+	gammalist = [.1, .3, .5]
+	problist = [.15, .2, .25, .3, .35, .50]
+	studs = [30, 50, 100]
+	reps = 10000
 	
-	mulist = [.1, .3,]
-	alphalist = [.01,]
-	gammalist = [.1,]
-	problist = [.15,]
-	studs = [30,]
-	reps = 10
+#	mulist = [.1, .3,]
+#	alphalist = [.01,]
+#	gammalist = [.1,]
+#	problist = [.15,]
+#	studs = [30,]
+#	reps = 100
 
 	questions = 30
 	guessprob = 0.25
