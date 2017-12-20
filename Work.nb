@@ -1,0 +1,527 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     16330,        517]
+NotebookOptionsPosition[     13081,        449]
+NotebookOutlinePosition[     13441,        465]
+CellTagsIndexPosition[     13398,        462]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+Store the original Smith and Wagner estimators and restate them in terms of \
+estimated probability (ep) instead of n; Specify the gain estimator\
+\>", "Subsection",
+ CellChangeTimes->{{3.722761416839746*^9, 3.722761451380097*^9}, {
+  3.722761649451442*^9, 
+  3.722761672201889*^9}},ExpressionUUID->"5a0a67f2-c945-4fa5-8800-\
+e3aa2e62c9ca"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"mu", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    RowBox[{"enl", "+", "erl", "+", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], 
+      RowBox[{
+       RowBox[{"-", "1"}], "+", "n"}]]}], "/.", " ", 
+    RowBox[{"n", "\[Rule]", 
+     RowBox[{"1", "/", "ep"}]}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"gamma", " ", "=", 
+  RowBox[{"Simplify", "[", " ", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"n", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "1"}], "+", "enl", "+", "erl", "+", 
+        RowBox[{"epl", " ", "n"}]}], ")"}]}], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "1"}], "+", "n"}], ")"}], "2"]], "/.", 
+    RowBox[{"n", "\[Rule]", 
+     RowBox[{"1", "/", "ep"}]}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"alpha", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    FractionBox[
+     RowBox[{"n", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "1"}], "+", "epl", "+", "erl", "+", 
+        RowBox[{"enl", " ", "n"}]}], ")"}]}], 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"-", "1"}], "+", "n"}], ")"}], "2"]], "/.", " ", 
+    RowBox[{"n", "\[Rule]", 
+     RowBox[{"1", "/", "ep"}]}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"gain", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   FractionBox["gamma", 
+    RowBox[{"1", "-", "mu"}]], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.722760749977314*^9, 
+  3.722760861591363*^9}},ExpressionUUID->"3dda4686-b320-49c3-87dc-\
+859eb0de4052"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"enl", "-", "ep", "+", "erl"}], 
+  RowBox[{"1", "-", "ep"}]]], "Output",
+ CellChangeTimes->{
+  3.722760810415648*^9, {3.72276084326712*^9, 3.72276086217373*^9}, 
+   3.722761378625256*^9},ExpressionUUID->"fcaab201-6044-48ae-bceb-\
+af16ec9218a0"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"epl", "+", 
+   RowBox[{"ep", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}]}]}], 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "ep"}], ")"}], "2"]]], "Output",
+ CellChangeTimes->{
+  3.722760810415648*^9, {3.72276084326712*^9, 3.72276086217373*^9}, 
+   3.722761378636286*^9},ExpressionUUID->"f2792a98-d32e-46ff-a5c7-\
+2cf4587f8bec"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"enl", "+", 
+   RowBox[{"ep", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "epl", "+", "erl"}], ")"}]}]}], 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "ep"}], ")"}], "2"]]], "Output",
+ CellChangeTimes->{
+  3.722760810415648*^9, {3.72276084326712*^9, 3.72276086217373*^9}, 
+   3.722761378644045*^9},ExpressionUUID->"b5ab87ae-b78b-42fd-8a62-\
+b4829d6ffc7f"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"epl", "+", 
+   RowBox[{"ep", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}]}]}], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "ep"}], ")"}], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}]}]]], "Output",
+ CellChangeTimes->{
+  3.722760810415648*^9, {3.72276084326712*^9, 3.72276086217373*^9}, 
+   3.7227613786516933`*^9},ExpressionUUID->"99f77e64-74c0-4966-a91f-\
+3e5faa478646"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Solve for implied probability when alpha =0; Substitute the value into the \
+gamma and gain estimator\
+\>", "Subsection",
+ CellChangeTimes->{{3.722761467789064*^9, 
+  3.7227615116653967`*^9}},ExpressionUUID->"17203782-9aee-4b8d-a902-\
+894650186b00"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"nls", " ", "=", 
+  RowBox[{"Flatten", "[", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{"alpha", "\[Equal]", "0"}], ",", "ep"}], "]"}], "]"}]}]], "Input",\
+
+ CellChangeTimes->{{3.72276125067773*^9, 
+  3.722761276526635*^9}},ExpressionUUID->"92a847fb-68d7-45a0-8d54-\
+a8920f23d02c"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"ep", "\[Rule]", 
+   RowBox[{"-", 
+    FractionBox["enl", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "epl", "+", "erl"}]]}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.722761256510442*^9, 3.722761276896957*^9}, 
+   3.722761378726495*^9},ExpressionUUID->"cea40fff-7bd0-4603-a068-\
+0db7a6513aa1"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"gammaZ", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{"gamma", " ", "/.", " ", "nls"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"gainZ", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{"gain", " ", "/.", "nls"}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.722761331396912*^9, 
+  3.722761368532557*^9}},ExpressionUUID->"f987128f-b4f6-4324-89e7-\
+8e07880c9658"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{"enl", "-", "epl"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "epl", "+", "erl"}], ")"}]}], 
+   RowBox[{
+    RowBox[{"-", "1"}], "+", "enl", "+", "epl", "+", "erl"}]]}]], "Output",
+ CellChangeTimes->{
+  3.722761378776958*^9},ExpressionUUID->"eadc6a07-04ca-47e5-bc7b-\
+50a222f4b198"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"enl", "-", "epl"}], 
+  RowBox[{
+   RowBox[{"-", "1"}], "+", "enl", "+", "erl"}]]], "Output",
+ CellChangeTimes->{
+  3.722761378785289*^9},ExpressionUUID->"4049afdb-778f-485d-b90d-\
+1f73dedcd421"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Restate estimators in terms of p and \[CapitalDelta]", "Subsection",
+ CellChangeTimes->{{3.722761525234252*^9, 
+  3.7227615464317837`*^9}},ExpressionUUID->"dd60c85d-516e-4a6d-9cb5-\
+3771cd3039c8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"gammaE", " ", "=", " ", 
+  RowBox[{"gamma", " ", "/.", " ", 
+   RowBox[{"ep", "\[Rule]", 
+    RowBox[{"p", "+", "\[CapitalDelta]"}]}]}]}], "\[IndentingNewLine]", 
+ RowBox[{"gainE", " ", "=", " ", 
+  RowBox[{"gain", " ", "/.", " ", 
+   RowBox[{"ep", "\[Rule]", 
+    RowBox[{"p", " ", "+", "\[CapitalDelta]"}]}]}]}]}], "Input",
+ CellChangeTimes->{{3.722760872184292*^9, 
+  3.7227609176763277`*^9}},ExpressionUUID->"d0048571-9ee5-4ad2-af03-\
+f8b29836b75d"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"epl", "+", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{"p", "+", "\[CapitalDelta]"}], ")"}]}]}], 
+  SuperscriptBox[
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "p", "+", "\[CapitalDelta]"}], ")"}], 
+   "2"]]], "Output",
+ CellChangeTimes->{3.722760923072032*^9, 
+  3.7227613788435593`*^9},ExpressionUUID->"9261916e-0648-46e8-99e2-\
+b3928088000b"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"epl", "+", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{"p", "+", "\[CapitalDelta]"}], ")"}]}]}], 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}], " ", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"-", "1"}], "+", "p", "+", "\[CapitalDelta]"}], 
+    ")"}]}]]], "Output",
+ CellChangeTimes->{3.722760923072032*^9, 
+  3.722761378857009*^9},ExpressionUUID->"e0a7e203-a0de-4088-9869-\
+8c587631eef6"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calculate the elasticity of the two estimators", "Subsection",
+ CellChangeTimes->{{3.722761566312463*^9, 
+  3.7227615735585403`*^9}},ExpressionUUID->"cc0952e2-5dff-4406-8801-\
+6106f127d1f1"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ElasGain", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    RowBox[{"D", "[", 
+     RowBox[{"gainE", ",", "\[CapitalDelta]"}], "]"}], 
+    FractionBox["\[CapitalDelta]", "gainE"]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.722760965806473*^9, 
+  3.722761004029513*^9}},ExpressionUUID->"197eb954-3308-4f9f-bede-\
+8609d23a9c08"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "enl", "+", "epl", "+", "erl"}], ")"}], " ", 
+    "\[CapitalDelta]"}], 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "p", "+", "\[CapitalDelta]"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{"epl", "+", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"p", "+", "\[CapitalDelta]"}], ")"}]}]}], 
+     ")"}]}]]}]], "Output",
+ CellChangeTimes->{3.72276100449656*^9, 
+  3.7227613789092083`*^9},ExpressionUUID->"9c342bd5-d22e-4b92-9738-\
+1548efa295d4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ElasGamma", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    RowBox[{"D", "[", 
+     RowBox[{"gammaE", ",", "\[CapitalDelta]"}], "]"}], 
+    FractionBox["\[CapitalDelta]", "gammaE"]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.722761038787757*^9, 
+  3.722761077217552*^9}},ExpressionUUID->"f8013d3e-800f-427a-9286-\
+fa915aa7bc59"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{"\[CapitalDelta]", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"2", " ", "epl"}], "+", 
+      RowBox[{"enl", " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", "p", "+", "\[CapitalDelta]"}], ")"}]}], "+", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"-", "1"}], "+", "erl"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", "p", "+", "\[CapitalDelta]"}], ")"}]}]}], ")"}]}], 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "p", "+", "\[CapitalDelta]"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{"epl", "+", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"-", "1"}], "+", "enl", "+", "erl"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"p", "+", "\[CapitalDelta]"}], ")"}]}]}], 
+     ")"}]}]]}]], "Output",
+ CellChangeTimes->{3.7227610796681433`*^9, 
+  3.722761378955555*^9},ExpressionUUID->"1e662fb3-c681-4209-b132-\
+66d1704e6ecf"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calculate the ratio of the elasticities", "Subsection",
+ CellChangeTimes->{{3.722761585967712*^9, 
+  3.722761597465372*^9}},ExpressionUUID->"be49c049-7619-4994-b8b4-\
+412f37096050"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"R", " ", "=", " ", 
+  RowBox[{"FullSimplify", "[", 
+   FractionBox["ElasGain", "ElasGamma"], "]"}]}]], "Input",
+ CellChangeTimes->{{3.722761104344594*^9, 
+  3.722761121848024*^9}},ExpressionUUID->"02727769-b01e-4448-bedb-\
+cf3d32830ae0"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{
+   RowBox[{"-", "1"}], "+", "enl", "+", "epl", "+", "erl"}], 
+  RowBox[{
+   RowBox[{"2", " ", "epl"}], "+", 
+   RowBox[{"enl", " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "+", "p", "+", "\[CapitalDelta]"}], ")"}]}], "+", 
+   RowBox[{
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "1"}], "+", "erl"}], ")"}], " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "+", "p", "+", "\[CapitalDelta]"}], ")"}]}]}]]], "Output",
+ CellChangeTimes->{3.722761122633512*^9, 
+  3.7227613790052023`*^9},ExpressionUUID->"22bb1582-57ac-4483-99d1-\
+0e7c67549ab0"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Calculate the ratio of the elasticities given alpha = 0", "Subsection",
+ CellChangeTimes->{{3.722761614478012*^9, 
+  3.722761631083948*^9}},ExpressionUUID->"d66cbd34-fd10-43b8-a351-\
+693ce62ae9ee"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"RA", " ", "=", " ", 
+  RowBox[{"Simplify", "[", 
+   RowBox[{
+    RowBox[{"R", " ", "/.", " ", 
+     RowBox[{
+      RowBox[{"p", "+", "\[CapitalDelta]"}], "\[Rule]", " ", "ep"}]}], " ", "/.",
+     " ", "nls"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.722761219848729*^9, 3.722761235024622*^9}, {
+  3.722761283678578*^9, 
+  3.722761298182028*^9}},ExpressionUUID->"74cd6308-cab1-43b1-97df-\
+9f3fce7a0dd8"],
+
+Cell[BoxData[
+ RowBox[{"-", 
+  FractionBox[
+   RowBox[{
+    RowBox[{"-", "1"}], "+", "epl", "+", "erl"}], 
+   RowBox[{"1", "+", "enl", "-", 
+    RowBox[{"2", " ", "epl"}], "-", "erl"}]]}]], "Output",
+ CellChangeTimes->{3.7227612986232977`*^9, 
+  3.7227613790740347`*^9},ExpressionUUID->"4b49bc66-4ce3-4ab6-99a8-\
+ed6d2dceaacf"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{808, 701},
+WindowMargins->{{Automatic, 211}, {18, Automatic}},
+FrontEndVersion->"11.2 for Mac OS X x86 (32-bit, 64-bit Kernel) (September \
+10, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 350, 7, 81, "Subsection",ExpressionUUID->"5a0a67f2-c945-4fa5-8800-e3aa2e62c9ca"],
+Cell[CellGroupData[{
+Cell[955, 33, 1585, 48, 178, "Input",ExpressionUUID->"3dda4686-b320-49c3-87dc-859eb0de4052"],
+Cell[2543, 83, 282, 7, 54, "Output",ExpressionUUID->"fcaab201-6044-48ae-bceb-af16ec9218a0"],
+Cell[2828, 92, 452, 14, 55, "Output",ExpressionUUID->"f2792a98-d32e-46ff-a5c7-2cf4587f8bec"],
+Cell[3283, 108, 452, 14, 55, "Output",ExpressionUUID->"b5ab87ae-b78b-42fd-8a62-b4829d6ffc7f"],
+Cell[3738, 124, 537, 17, 54, "Output",ExpressionUUID->"99f77e64-74c0-4966-a91f-3e5faa478646"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4324, 147, 259, 6, 81, "Subsection",ExpressionUUID->"17203782-9aee-4b8d-a902-894650186b00"],
+Cell[CellGroupData[{
+Cell[4608, 157, 313, 9, 30, "Input",ExpressionUUID->"92a847fb-68d7-45a0-8d54-a8920f23d02c"],
+Cell[4924, 168, 335, 9, 54, "Output",ExpressionUUID->"cea40fff-7bd0-4603-a068-0db7a6513aa1"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5296, 182, 402, 9, 52, "Input",ExpressionUUID->"f987128f-b4f6-4324-89e7-8e07880c9658"],
+Cell[5701, 193, 404, 13, 54, "Output",ExpressionUUID->"eadc6a07-04ca-47e5-bc7b-50a222f4b198"],
+Cell[6108, 208, 233, 7, 52, "Output",ExpressionUUID->"4049afdb-778f-485d-b90d-1f73dedcd421"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6390, 221, 202, 3, 54, "Subsection",ExpressionUUID->"dd60c85d-516e-4a6d-9cb5-3771cd3039c8"],
+Cell[CellGroupData[{
+Cell[6617, 228, 478, 11, 52, "Input",ExpressionUUID->"d0048571-9ee5-4ad2-af03-f8b29836b75d"],
+Cell[7098, 241, 497, 16, 55, "Output",ExpressionUUID->"9261916e-0648-46e8-99e2-b3928088000b"],
+Cell[7598, 259, 579, 19, 54, "Output",ExpressionUUID->"e0a7e203-a0de-4088-9869-8c587631eef6"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8226, 284, 196, 3, 54, "Subsection",ExpressionUUID->"cc0952e2-5dff-4406-8801-6106f127d1f1"],
+Cell[CellGroupData[{
+Cell[8447, 291, 361, 9, 49, "Input",ExpressionUUID->"197eb954-3308-4f9f-bede-8609d23a9c08"],
+Cell[8811, 302, 707, 23, 54, "Output",ExpressionUUID->"9c342bd5-d22e-4b92-9738-1548efa295d4"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9555, 330, 364, 9, 49, "Input",ExpressionUUID->"f8013d3e-800f-427a-9286-fa915aa7bc59"],
+Cell[9922, 341, 996, 31, 54, "Output",ExpressionUUID->"1e662fb3-c681-4209-b132-66d1704e6ecf"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10967, 378, 187, 3, 54, "Subsection",ExpressionUUID->"be49c049-7619-4994-b8b4-412f37096050"],
+Cell[CellGroupData[{
+Cell[11179, 385, 261, 6, 49, "Input",ExpressionUUID->"02727769-b01e-4448-bedb-cf3d32830ae0"],
+Cell[11443, 393, 576, 17, 54, "Output",ExpressionUUID->"22bb1582-57ac-4483-99d1-0e7c67549ab0"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12068, 416, 203, 3, 54, "Subsection",ExpressionUUID->"d66cbd34-fd10-43b8-a351-693ce62ae9ee"],
+Cell[CellGroupData[{
+Cell[12296, 423, 427, 11, 30, "Input",ExpressionUUID->"74cd6308-cab1-43b1-97df-9f3fce7a0dd8"],
+Cell[12726, 436, 327, 9, 54, "Output",ExpressionUUID->"4b49bc66-4ce3-4ab6-99a8-ed6d2dceaacf"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
