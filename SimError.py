@@ -142,65 +142,32 @@ def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
 		df2 = pd.DataFrame(d)
 		classes = classes.append(df2, ignore_index=True)
 	
-	questions['esq'] = (questions['gamma'] - questions['egamma'])**2
 	questions['eabs'] = (questions['gamma'] - questions['egamma']).abs()
-	questions['eper'] = ((questions['gamma'] - questions['egamma'])/gamma)
-	questions['eperabs'] = questions['eper'].abs()
-	questions['epersq'] = (questions['eper'])**2
-	questions['egainsq'] = (questions['gammagain'] - questions['egammagain'])**2
 	questions['egainabs'] = (questions['gammagain'] - questions['egammagain']).abs()
-	questions['egainper'] = ((questions['gammagain'] - questions['egammagain'])/gammagainc)
-	questions['egainperabs'] = questions['egainper'].abs()
-	questions['egainpersq'] = (questions['egainper'])**2
-	
-	questions['eperzero'] = ((questions['gamma'] - questions['engamma'])/gamma)
-	questions['eperzeroabs'] = questions['eperzero'].abs()
-	questions['eperzerosq'] = (questions['eperzero'])**2	
-	questions['esqzero'] = (questions['gamma'] - questions['engamma'])**2
 	questions['eabszero'] = (questions['gamma'] - questions['engamma']).abs()
-	questions['egainsqzero'] = (questions['gammagain'] - questions['engammagain'])**2
 	questions['egainabszero'] = (questions['gammagain'] - questions['engammagain']).abs()
-	questions['egainperzero'] = ((questions['gammagain'] - questions['engammagain'])/gammagainc)
-	questions['egainperzeroabs'] = questions['egainperzero'].abs()
-	questions['egainperzerosq'] = (questions['egainperzero'])**2
 	
-	classes['eper'] = ((classes['gamma'] - classes['egamma'])/gamma)
-	classes['eperabs'] = classes['eper'].abs()
-	classes['epersq'] = (classes['eper'])**2
-	classes['esq'] = (classes['gamma'] - classes['egamma'])**2
 	classes['eabs'] = (classes['gamma'] - classes['egamma']).abs()
-	classes['egainsq'] = (classes['gammagain'] - classes['egammagain'])**2
 	classes['egainabs'] = (classes['gammagain'] - classes['egammagain']).abs()
-	classes['egainper'] = ((classes['gammagain'] - classes['egammagain'])/gammagainc)
-	classes['egainpersq'] = (classes['egainper'])**2
-	classes['egainperabs'] = classes['egainper'].abs()
-	classes['eperzero'] = ((classes['gamma'] - classes['engamma'])/gamma)
-	classes['eperzeroabs'] = classes['eperzero'].abs()
-	classes['eperzerosq'] = (classes['eperzero'])**2
-	classes['esqzero'] = (classes['gamma'] - classes['engamma'])**2
 	classes['eabszero'] = (classes['gamma'] - classes['engamma']).abs()
-	classes['egainsqzero'] = (classes['gammagain'] - classes['engammagain'])**2
 	classes['egainabszero'] = (classes['gammagain'] - classes['engammagain']).abs()
-	classes['egainperzero'] = ((classes['gammagain'] - classes['engammagain'])/gammagainc)
-	classes['egainperzeroabs'] = classes['egainperzero'].abs()
-	classes['egainperzerosq'] = (classes['egainperzero'])**2 
 	
 	return (classes, questions)
 
 
 def ManageSimulation(reps, q, n, mu, alpha, gamma, prob, gprob):
 	classes, questions = SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob)
-	classaverage = sqldf("SELECT AVG(esq) AS esq, AVG(eabs) AS eabs, AVG(egainsq) AS egainsq, AVG(egainabs) AS egainabs, AVG(esqzero) AS esqzero, AVG(eabszero) AS eabszero, AVG(egainsqzero) AS egainsqzero, AVG(egainabszero) AS egainabszero, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain, AVG(gammagain) AS gammagain, AVG(gamma) AS gamma, AVG(eper) AS eper, AVG(eperabs) AS eperabs, AVG(epersq) AS epersq, AVG(egainper) AS egainper, AVG(egainperabs) AS egainperabs, AVG(egainpersq) AS egainpersq, AVG(eperzero) AS eperzero, AVG(eperzeroabs) AS eperzeroabs, AVG(eperzerosq) AS eperzerosq, AVG(egainperzero) AS egainperzero,   AVG(egainperzeroabs) AS egainperzeroabs, AVG(egainperzerosq) AS egainperzerosq FROM classes",locals())
-	qaverage = sqldf("SELECT AVG(esq) AS esq, AVG(eabs) AS eabs, AVG(egainsq) AS egainsq, AVG(egainabs) AS egainabs, AVG(esqzero) AS esqzero, AVG(eabszero) AS eabszero, AVG(egainsqzero) AS egainsqzero, AVG(egainabszero) AS egainabszero, AVG(eper) AS eper, AVG(eperabs) AS eperabs, AVG(epersq) AS epersq, AVG(egainper) AS egainper, AVG(egainperabs) AS egainperabs, AVG(egainpersq) AS egainpersq, AVG(eperzero) AS eperzero, AVG(eperzeroabs) AS eperzeroabs, AVG(eperzerosq) AS eperzerosq, AVG(egainperzero) AS egainperzero,   AVG(egainperzeroabs) AS egainperzeroabs, AVG(egainperzerosq) AS egainperzerosq FROM questions WHERE question=1",locals())
+	classaverage = sqldf("SELECT AVG(eabs) AS eabs, AVG(egainabs) AS egainabs, AVG(eabszero) AS eabszero, AVG(egainabszero) AS egainabszero, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain, AVG(gammagain) AS gammagain, AVG(gamma) AS gamma FROM classes",locals())
+	qaverage = sqldf("SELECT AVG(eabs) AS eabs, AVG(egainabs) AS egainabs, AVG(eabszero) AS eabszero, AVG(egainabszero) AS egainabszero, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain, AVG(gammagain) AS gammagain, AVG(gamma) AS gamma FROM questions WHERE question=1",locals())
 	return classaverage, qaverage
 
 
 def ManageProcess(row):
 	try:
 		classaverage, qaverage = ManageSimulation(row['reps'], row['questions'], row['studs'], row['mu'], row['alpha'], row['gamma'], row['prob'], row['guessprob'])
-		return {'mu':row['mu'],'alpha':row['alpha'],'gamma':row['gamma'],'prob':row['prob'],'studs':row['studs'],'ClassEstSq':float(classaverage['esq'].astype(float)),'ClassEstAbs':float(classaverage['eabs'].astype(float)),'ClassEstGainSq':float(classaverage['egainsq'].astype(float)),'ClassEstGainAbs':float(classaverage['egainabs'].astype(float)),'ClassEstZeroSq':float(classaverage['esqzero'].astype(float)),'ClassEstZeroAbs':float(classaverage['eabszero'].astype(float)),'ClassEstGainZeroSq':float(classaverage['egainsqzero'].astype(float)),'ClassEstGainZeroAbs':float(classaverage['egainabszero'].astype(float)),'EstGamma':float(classaverage['egamma'].astype(float)),'EstGammaGain':float(classaverage['egammagain'].astype(float)),'EstGammaZero':float(classaverage['engamma'].astype(float)),'EstGammaGainZero':float(classaverage['engammagain'].astype(float)),'AvgGamma':float(classaverage['gamma'].astype(float)),'AvgGammaGain':float(classaverage['gammagain'].astype(float)),'QuestionEstSq':float(qaverage['esq'].astype(float)),'QuestionEstAbs':float(qaverage['eabs'].astype(float)),'QuestionEstGainSq':float(qaverage['egainsq'].astype(float)),'QuestionEstGainAbs':float(qaverage['egainabs'].astype(float)),'QuestionEstZeroSq':float(qaverage['esqzero'].astype(float)),'QuestionEstZeroAbs':float(qaverage['eabszero'].astype(float)),'QuestionEstGainZeroSq':float(qaverage['egainsqzero'].astype(float)),'QuestionEstGainZeroAbs':float(qaverage['egainabszero'].astype(float)),'ClassEstGammaAvgPercentChange':float(classaverage['eper'].astype(float)),'ClassEstGammaAvgAbsPercentChange':float(classaverage['eperabs'].astype(float)),'ClassEstGammaAvgSqPercentChange':float(classaverage['epersq'].astype(float)),'ClassEstGainAvgPercentChange':float(classaverage['egainper'].astype(float)),'ClassEstGainAvgAbsPercentChange':float(classaverage['egainperabs'].astype(float)),'ClassEstGainAvgSqPercentChange':float(classaverage['egainpersq'].astype(float)),'ClassEstGammaZeroAvgPercentChange':float(classaverage['eperzero'].astype(float)),'ClassEstGammaZeroAvgAbsPercentChange':float(classaverage['eperzeroabs'].astype(float)),'ClassEstGammaZeroAvgSqPercentChange':float(classaverage['eperzerosq'].astype(float)),'ClassEstGainZeroAvgPercentChange':float(classaverage['egainperzero'].astype(float)),'ClassEstGainZeroAvgAbsPercentChange':float(classaverage['egainperzeroabs'].astype(float)),'ClassEstGainZeroAvgSqPercentChange':float(classaverage['egainperzerosq'].astype(float)),'QuestionEstGammaAvgPercentChange':float(qaverage['eper'].astype(float)),'QuestionEstGammaAvgAbsPercentChange':float(qaverage['eperabs'].astype(float)),'QuestionEstGammaAvgSqPercentChange':float(qaverage['epersq'].astype(float)),'QuestionEstGainAvgPercentChange':float(qaverage['egainper'].astype(float)),'QuestionEstGainAvgAbsPercentChange':float(qaverage['egainperabs'].astype(float)),'QuestionEstGainAvgSqPercentChange':float(qaverage['egainpersq'].astype(float)),'QuestionEstGammaZeroAvgPercentChange':float(qaverage['eperzero'].astype(float)),'QuestionEstGammaZeroAvgAbsPercentChange':float(qaverage['eperzeroabs'].astype(float)),'QuestionEstGammaZeroAvgSqPercentChange':float(qaverage['eperzerosq'].astype(float)),'QuestionEstGainZeroAvgPercentChange':float(qaverage['egainperzero'].astype(float)),'QuestionEstGainZeroAvgAbsPercentChange':float(qaverage['egainperzeroabs'].astype(float)),'QuestionEstGainZeroAvgSqPercentChange':float(qaverage['egainperzerosq'].astype(float))}
+		return {'mu':row['mu'],'alpha':row['alpha'],'gamma':row['gamma'],'prob':row['prob'],'studs':row['studs'],'ClassEstAbs':float(classaverage['eabs'].astype(float)),'ClassEstGainAbs':float(classaverage['egainabs'].astype(float)),'ClassEstZeroAbs':float(classaverage['eabszero'].astype(float)),'ClassEstGainZeroAbs':float(classaverage['egainabszero'].astype(float)),'QuestionEstAbs':float(qaverage['eabs'].astype(float)),'QuestionEstGainAbs':float(qaverage['egainabs'].astype(float)),'QuestionEstZeroAbs':float(qaverage['eabszero'].astype(float)),'QuestionEstGainZeroAbs':float(qaverage['egainabszero'].astype(float))}
 	except:
-		return {'mu':row['mu'],'alpha':row['alpha'],'gamma':row['gamma'],'prob':row['prob'],'studs':row['studs'],'ClassEstSq':None,'ClassEstAbs':None,'ClassEstGainSq':None,'ClassEstGainAbs':None,'ClassEstZeroSq':None,'ClassEstZeroAbs':None,'ClassEstGainZeroSq':None,'ClassEstGainZeroAbs':None,'EstGamma':None,'EstGammaGain':None,'EstGammaZero':None,'EstGammaGainZero':None,'AvgGamma':None,'AvgGammaGain':None,'QuestionEstSq':None,'QuestionEstAbs':None,'QuestionEstGainSq':None,'QuestionEstGainAbs':None,'QuestionEstZeroSq':None,'QuestionEstZeroAbs':None,'QuestionEstGainZeroSq':None,'QuestionEstGainZeroAbs':None,'ClassEstGammaAvgPercentChange':None,'ClassEstGammaAvgAbsPercentChange':None,'ClassEstGammaAvgSqPercentChange':None,'ClassEstGainAvgPercentChange':None,'ClassEstGainAvgAbsPercentChange':None,'ClassEstGainAvgSqPercentChange':None,'ClassEstGammaZeroAvgPercentChange':None,'ClassEstGammaZeroAvgAbsPercentChange':None,'ClassEstGammaZeroAvgSqPercentChange':None,'ClassEstGainZeroAvgPercentChange':None,'ClassEstGainZeroAvgAbsPercentChange':None,'ClassEstGainZeroAvgSqPercentChange':None,'QuestionEstGammaAvgPercentChange':None,'QuestionEstGammaAvgAbsPercentChange':None,'QuestionEstGammaAvgSqPercentChange':None,'QuestionEstGainAvgPercentChange':None,'QuestionEstGainAvgAbsPercentChange':None,'QuestionEstGainAvgSqPercentChange':None,'QuestionEstGammaZeroAvgPercentChange':None,'QuestionEstGammaZeroAvgAbsPercentChange':None,'QuestionEstGammaZeroAvgSqPercentChange':None,'QuestionEstGainZeroAvgPercentChange':None,'QuestionEstGainZeroAvgAbsPercentChange':None,'QuestionEstGainZeroAvgSqPercentChange':None}
+		return {'mu':row['mu'],'alpha':row['alpha'],'gamma':row['gamma'],'prob':row['prob'],'studs':row['studs'],'ClassEstAbs':None,'ClassEstGainAbs':None,'ClassEstZeroAbs':None,'ClassEstGainZeroAbs':None,'QuestionEstAbs':None,'QuestionEstGainAbs':None,'QuestionEstZeroAbs':None,'QuestionEstGainZeroAbs':None}
 	
 
 if __name__ == '__main__':
@@ -232,7 +199,7 @@ if __name__ == '__main__':
 	p.close()
 	p.join()
 	keys = r[0].keys()
-	fields = ['mu','alpha','gamma','prob','studs','ClassEstSq','ClassEstAbs','ClassEstGainSq','ClassEstGainAbs','ClassEstZeroSq','ClassEstZeroAbs','ClassEstGainZeroSq','ClassEstGainZeroAbs','EstGamma','EstGammaGain','EstGammaZero','EstGammaGainZero','AvgGamma','AvgGammaGain','QuestionEstSq','QuestionEstAbs','QuestionEstGainSq','QuestionEstGainAbs','QuestionEstZeroSq','QuestionEstZeroAbs','QuestionEstGainZeroSq','QuestionEstGainZeroAbs','ClassEstGammaAvgPercentChange','ClassEstGammaAvgAbsPercentChange','ClassEstGammaAvgSqPercentChange','ClassEstGainAvgPercentChange','ClassEstGainAvgAbsPercentChange','ClassEstGainAvgSqPercentChange','ClassEstGammaZeroAvgPercentChange','ClassEstGammaZeroAvgAbsPercentChange','ClassEstGammaZeroAvgSqPercentChange','ClassEstGainZeroAvgPercentChange','ClassEstGainZeroAvgAbsPercentChange','ClassEstGainZeroAvgSqPercentChange','QuestionEstGammaAvgPercentChange','QuestionEstGammaAvgAbsPercentChange','QuestionEstGammaAvgSqPercentChange','QuestionEstGainAvgPercentChange','QuestionEstGainAvgAbsPercentChange','QuestionEstGainAvgSqPercentChange','QuestionEstGammaZeroAvgPercentChange','QuestionEstGammaZeroAvgAbsPercentChange','QuestionEstGammaZeroAvgSqPercentChange','QuestionEstGainZeroAvgPercentChange','QuestionEstGainZeroAvgAbsPercentChange','QuestionEstGainZeroAvgSqPercentChange']
+	fields = ['mu','alpha','gamma','prob','studs','ClassEstAbs','ClassEstGainAbs','ClassEstZeroAbs','ClassEstGainZeroAbs','QuestionEstAbs','QuestionEstGainAbs','QuestionEstZeroAbs','QuestionEstGainZeroAbs']
 	with open('results.csv', 'w') as output_file:
 		dict_writer = csv.DictWriter(output_file, fieldnames=fields)
 		dict_writer.writeheader()
