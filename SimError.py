@@ -171,10 +171,10 @@ def ManageProcess(row):
 	
 
 if __name__ == '__main__':
-	mulist = [.1, .3, .5, .7]
-	alphalist = [.01, .03, .05, .07, .09]
-	gammalist = [.1, .3, .5]
-	problist = [.15, .2, .25, .3, .35, .50]
+	mulist = [.1, .2, .3, .4, .5]
+	alphalist = [.01, .02, .03, .04, .05]
+	gammalist = [.1, .2, .3, .4, .5]
+	problist = [.15, .2, .25, .3, .35]
 	studs = [30, 50, 100]
 	reps = 10000
 	
