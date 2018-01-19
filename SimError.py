@@ -248,10 +248,10 @@ if __name__ == '__main__':
 	# studs = [30, 50, 100]
 	# reps = 10000
 	
-	mulist = [.1, .3,]
-	alphalist = [.01,.03,.05]
-	gammalist = [.1,.3,.5]
-	problist = [.15,.20,.25,.30,.35]
+	mulist = [.1, .3, .5]
+	alphalist = [.01, .03, .05]
+	gammalist = [.1, .3, .5]
+	problist = [.15, .20, .25, .30, .35]
 	studs = [50,]
 	reps = 10000
 
