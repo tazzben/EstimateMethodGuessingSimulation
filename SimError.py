@@ -9,6 +9,17 @@ import argparse
 from pandasql import sqldf
 from multiprocessing import Pool
 from itertools import product
+import statsmodels.formula.api as sm
+import matplotlib.pyplot as plt
+from statsmodels.sandbox.regression.predstd import wls_prediction_std
+from statsmodels.iolib.table import (SimpleTable, default_txt_fmt)
+import matplotlib
+matplotlib.style.use('ggplot')
+import statsmodels.api as sm2
+import collections
+import decimal
+from collections import defaultdict
+
 
 def GuessPre(x, prob):
 	if x['mu']==1:
@@ -157,6 +168,65 @@ def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
 
 def ManageSimulation(reps, q, n, mu, alpha, gamma, prob, gprob):
 	classes, questions = SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob)
+	
+	plt.figure()
+	classes['egamma'].plot(kind='density',color='k', alpha=1, grid=False)
+	plt.axvline(x=classes['gamma'].mean(), color='k', linewidth=1)
+	axes = plt.gca()
+	axes.set_xlim(auto=True)
+	plt.xlabel(r'Observed $\hat \gamma$ Distribution when $\hat p = 1/4$')
+	plt.savefig('gamma_' + str(prob) + '_' + str(alpha) + '_' + str(mu) + '_' + str(gamma) + '.pdf',format='pdf')
+	plt.close()
+	
+	plt.figure()
+	classes['egammagain'].plot(kind='density',color='k', alpha=1, grid=False)
+	plt.axvline(x=classes['gammagain'].mean(), color='k', linewidth=1)
+	axes = plt.gca()
+	axes.set_xlim(auto=True)
+	plt.xlabel(r'Observed $\hat \gamma/(1-\hat \mu)$ Distribution when $\hat p = 1/4$')
+	plt.savefig('gammagain_' + str(prob) + '_' + str(alpha) + '_' + str(mu) + '_' + str(gamma) + '.pdf',format='pdf')
+	plt.close()
+	
+	plt.figure()
+	classes['engamma'].plot(kind='density',color='k', alpha=1, grid=False)
+	plt.axvline(x=classes['gamma'].mean(), color='k', linewidth=1)
+	axes = plt.gca()
+	axes.set_xlim(auto=True)
+	plt.xlabel(r'Observed $\hat \gamma$ Distribution when $\hat \alpha = 0$')
+	plt.savefig('gammaZ_' + str(prob) + '_' + str(alpha) + '_' + str(mu) + '_' + str(gamma) + '.pdf',format='pdf')
+	plt.close()
+	
+	plt.figure()
+	classes['engammagain'].plot(kind='density',color='k', alpha=1, grid=False)
+	plt.axvline(x=classes['gammagain'].mean(), color='k', linewidth=1)
+	axes = plt.gca()
+	axes.set_xlim(auto=True)
+	plt.xlabel(r'Observed $\hat \gamma/(1-\hat \mu)$ Distribution when $\hat \alpha = 0$')
+	plt.savefig('gammagainZ_' + str(prob) + '_' + str(alpha) + '_' + str(mu) + '_' + str(gamma) + '.pdf',format='pdf')
+	plt.close()
+	
+	plt.figure()
+	classes['egamma'].plot(kind='density',color='k', alpha=1, grid=False, label=r'$\hat p=1/4$')
+	classes['engamma'].plot(kind='density', color='k', linestyle='dashed', alpha=1, grid=False, label=r'$\hat \alpha=0$')
+	plt.axvline(x=classes['gamma'].mean(), color='k', linewidth=1, label=r'True value of $\hat \gamma$')
+	axes = plt.gca()
+	axes.set_xlim(auto=True)
+	plt.legend()
+	plt.xlabel(r'Observed $\hat \gamma$ Distribution')
+	plt.savefig('gammaComb_' + str(prob) + '_' + str(alpha) + '_' + str(mu) + '_' + str(gamma) + '.pdf',format='pdf')
+	plt.close()
+	
+	plt.figure()
+	classes['egammagain'].plot(kind='density',color='k', alpha=1, grid=False, label=r'$\hat p=1/4$')
+	classes['engammagain'].plot(kind='density', color='k', linestyle='dashed', alpha=1, grid=False, label=r'$\hat \alpha=0$')
+	plt.axvline(x=classes['gammagain'].mean(), color='k', linewidth=1, label=r'True value of $\hat \gamma/(1-\hat \mu)$')
+	axes = plt.gca()
+	axes.set_xlim(auto=True)
+	plt.legend()
+	plt.xlabel(r'Observed $\hat \gamma/(1-\hat \mu)$ Distribution')
+	plt.savefig('gammagainComb_' + str(prob) + '_' + str(alpha) + '_' + str(mu) + '_' + str(gamma) + '.pdf',format='pdf')
+	plt.close()
+	
 	classaverage = sqldf("SELECT AVG(eabs) AS eabs, AVG(egainabs) AS egainabs, AVG(eabszero) AS eabszero, AVG(egainabszero) AS egainabszero, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain, AVG(gammagain) AS gammagain, AVG(gamma) AS gamma FROM classes",locals())
 	qaverage = sqldf("SELECT AVG(eabs) AS eabs, AVG(egainabs) AS egainabs, AVG(eabszero) AS eabszero, AVG(egainabszero) AS egainabszero, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain, AVG(gammagain) AS gammagain, AVG(gamma) AS gamma FROM questions WHERE question=1",locals())
 	return classaverage, qaverage
@@ -171,19 +241,19 @@ def ManageProcess(row):
 	
 
 if __name__ == '__main__':
-	mulist = [.1, .2, .3, .4, .5]
-	alphalist = [.01, .02, .03, .04, .05]
-	gammalist = [.1, .2, .3, .4, .5]
-	problist = [.15, .2, .25, .3, .35]
-	studs = [30, 50, 100]
-	reps = 10000
+	# mulist = [.1, .2, .3, .4, .5]
+	# alphalist = [.01, .02, .03, .04, .05]
+	# gammalist = [.1, .2, .3, .4, .5]
+	# problist = [.15, .2, .25, .3, .35]
+	# studs = [30, 50, 100]
+	# reps = 10000
 	
-#	mulist = [.1, .3,]
-#	alphalist = [.01,]
-#	gammalist = [.1,]
-#	problist = [.15,]
-#	studs = [30,]
-#	reps = 100
+	mulist = [.1, .3,]
+	alphalist = [.01,.03,.05]
+	gammalist = [.1,.3,.5]
+	problist = [.15,.20,.25,.30,.35]
+	studs = [50,]
+	reps = 10000
 
 	questions = 30
 	guessprob = 0.25
@@ -194,13 +264,5 @@ if __name__ == '__main__':
 	for _, row in combs.iterrows():
 		interList.append({'mu':float(row['mu'].astype(float)),'alpha':float(row['alpha'].astype(float)),'gamma':float(row['gamma'].astype(float)),'prob':float(row['prob'].astype(float)),'studs':int(row['studs']),'reps':reps,'questions':questions,'guessprob':guessprob})
 	
-	p = Pool()
-	r = p.map(ManageProcess, interList)
-	p.close()
-	p.join()
-	keys = r[0].keys()
-	fields = ['mu','alpha','gamma','prob','studs','ClassEstAbs','ClassEstGainAbs','ClassEstZeroAbs','ClassEstGainZeroAbs','QuestionEstAbs','QuestionEstGainAbs','QuestionEstZeroAbs','QuestionEstGainZeroAbs']
-	with open('results.csv', 'w') as output_file:
-		dict_writer = csv.DictWriter(output_file, fieldnames=fields)
-		dict_writer.writeheader()
-		dict_writer.writerows(r)
+	for row in interList:
+		ManageProcess(row)
