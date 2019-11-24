@@ -137,10 +137,10 @@ def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
 		df['egammagain'] = df.apply(GammaGain,args=(gprob,),axis=1)
 		df['engamma'] = df.apply(ZeroGamma,axis=1)
 		df['engammagain'] = df.apply(ZeroGammaGain,axis=1)
-		questions = questions.append(df, ignore_index=True)
+		questions = questions.append(df, ignore_index=True, sort=True)
 		d = sqldf('SELECT id, AVG(pl) AS pl, AVG(zl) AS zl, AVG(rl) AS rl, AVG(nl) AS nl, AVG(gamma) AS gamma, AVG(alpha) AS alpha, AVG(mu) AS mu, AVG(gammagain) AS gammagain, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain FROM df',locals())
 		df2 = pd.DataFrame(d)
-		classes = classes.append(df2, ignore_index=True)
+		classes = classes.append(df2, ignore_index=True, sort=True)
 	
 	questions['eabs'] = (questions['gamma'] - questions['egamma']).abs()
 	questions['egainabs'] = (questions['gammagain'] - questions['egammagain']).abs()
