@@ -52,7 +52,6 @@ def RL(x):
 
 def Gamma(x, gprob):
 	pl = x['pl']
-	zl = x['zl']
 	rl = x['rl']
 	nl = x['nl']
 	numoptions = 1/gprob
@@ -64,7 +63,6 @@ def Gamma(x, gprob):
 
 def GammaGain(x, gprob):
 	pl = x['pl']
-	zl = x['zl']
 	rl = x['rl']
 	nl = x['nl']
 	numoptions = 1/gprob
@@ -94,7 +92,7 @@ def CGammaGain(x):
 	else:
 		return None		
 
-def GetStudents(mu, q, n, alpha, gamma):
+def GetStudents(mu, q, n, alpha, gamma, abilityFactor = False):
 	studentability = numpy.random.binomial(q, mu, size=n)
 	gamma = gamma/(1-mu)
 	alpha = alpha/mu
@@ -102,10 +100,11 @@ def GetStudents(mu, q, n, alpha, gamma):
 	StudentClass = pd.DataFrame(columns=('mu', 'alpha', 'gamma','question','studentid'))
 	for student in studentability:
 		studentid = studentid + 1
+		studentmu = student/q if abilityFactor else mu
 		knownResponses = numpy.concatenate((numpy.ones(student),numpy.zeros(q - student)))
-		studentforgot = numpy.random.binomial(student, alpha)
+		studentforgot = numpy.random.binomial(student, alpha*(1-studentmu)/(1-mu))
 		forgotResponses = numpy.concatenate((numpy.ones(studentforgot),numpy.zeros(q - studentforgot)))
-		studentlearned = numpy.random.binomial(q - student, gamma)
+		studentlearned = numpy.random.binomial(q - student, gamma*studentmu/mu)
 		learnedResponses = numpy.concatenate((numpy.zeros(q - studentlearned),numpy.ones(studentlearned)))
 		studentK = numpy.column_stack((knownResponses, forgotResponses, learnedResponses))
 		numpy.random.shuffle(studentK)
@@ -117,12 +116,11 @@ def GetStudents(mu, q, n, alpha, gamma):
 
 
 
-def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
-	gammagainc = gamma/(1-mu)
+def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob, abilityFactor = False):
 	questions = pd.DataFrame(columns=('id','question', 'pl', 'zl', 'rl', 'nl', 'gamma','alpha','mu','gammagain','egamma','egammagain','engamma','engammagain'))
 	classes = pd.DataFrame(columns=('id','pl', 'zl', 'rl', 'nl', 'gamma','alpha','mu','gammagain','egamma','egammagain','engamma','engammagain'))
 	for i in range(reps):
-		students = GetStudents(mu, q, n, alpha, gamma)
+		students = GetStudents(mu, q, n, alpha, gamma, abilityFactor)
 		students['pretest'] = students.apply(GuessPre, args=(prob,), axis=1)
 		students['posttest'] = students.apply(GuessPost, args=(prob,), axis=1)
 		students['pl'] = students.apply(PL, axis=1)
@@ -151,12 +149,11 @@ def SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob):
 	classes['egainabs'] = (classes['gammagain'] - classes['egammagain']).abs()
 	classes['eabszero'] = (classes['gamma'] - classes['engamma']).abs()
 	classes['egainabszero'] = (classes['gammagain'] - classes['engammagain']).abs()
-	
 	return (classes, questions)
 
 
-def ManageSimulation(reps, q, n, mu, alpha, gamma, prob, gprob):
-	classes, questions = SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob)
+def ManageSimulation(reps, q, n, mu, alpha, gamma, prob, gprob, abilityFactor = False):
+	classes, questions = SimulateDist(reps, q, n, mu, alpha, gamma, prob, gprob, abilityFactor)
 	classaverage = sqldf("SELECT AVG(eabs) AS eabs, AVG(egainabs) AS egainabs, AVG(eabszero) AS eabszero, AVG(egainabszero) AS egainabszero, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain, AVG(gammagain) AS gammagain, AVG(gamma) AS gamma FROM classes",locals())
 	qaverage = sqldf("SELECT AVG(eabs) AS eabs, AVG(egainabs) AS egainabs, AVG(eabszero) AS eabszero, AVG(egainabszero) AS egainabszero, AVG(egamma) AS egamma, AVG(egammagain) AS egammagain, AVG(engamma) AS engamma, AVG(engammagain) AS engammagain, AVG(gammagain) AS gammagain, AVG(gamma) AS gamma FROM questions WHERE question=1",locals())
 	return classaverage, qaverage
@@ -164,7 +161,7 @@ def ManageSimulation(reps, q, n, mu, alpha, gamma, prob, gprob):
 
 def ManageProcess(row):
 	try:
-		classaverage, qaverage = ManageSimulation(row['reps'], row['questions'], row['studs'], row['mu'], row['alpha'], row['gamma'], row['prob'], row['guessprob'])
+		classaverage, qaverage = ManageSimulation(row['reps'], row['questions'], row['studs'], row['mu'], row['alpha'], row['gamma'], row['prob'], row['guessprob'], row['abilityfactor'])
 		return {'mu':row['mu'],'alpha':row['alpha'],'gamma':row['gamma'],'prob':row['prob'],'studs':row['studs'],'ClassEstAbs':float(classaverage['eabs'].astype(float)),'ClassEstGainAbs':float(classaverage['egainabs'].astype(float)),'ClassEstZeroAbs':float(classaverage['eabszero'].astype(float)),'ClassEstGainZeroAbs':float(classaverage['egainabszero'].astype(float)),'QuestionEstAbs':float(qaverage['eabs'].astype(float)),'QuestionEstGainAbs':float(qaverage['egainabs'].astype(float)),'QuestionEstZeroAbs':float(qaverage['eabszero'].astype(float)),'QuestionEstGainZeroAbs':float(qaverage['egainabszero'].astype(float))}
 	except:
 		return {'mu':row['mu'],'alpha':row['alpha'],'gamma':row['gamma'],'prob':row['prob'],'studs':row['studs'],'ClassEstAbs':None,'ClassEstGainAbs':None,'ClassEstZeroAbs':None,'ClassEstGainZeroAbs':None,'QuestionEstAbs':None,'QuestionEstGainAbs':None,'QuestionEstZeroAbs':None,'QuestionEstGainZeroAbs':None}
@@ -178,21 +175,22 @@ if __name__ == '__main__':
 	studs = [30, 50, 100]
 	reps = 10000
 	
-#	mulist = [.1, .3,]
-#	alphalist = [.01,]
-#	gammalist = [.1,]
-#	problist = [.15,]
-#	studs = [30,]
-#	reps = 100
+	# mulist = [.1, .3,]
+	# alphalist = [.01,]
+	# gammalist = [.1,]
+	# problist = [.15,]
+	# studs = [30,]
+	# reps = 100
 
 	questions = 30
 	guessprob = 0.25
+	abilityFactor = False
 
 	combs=pd.DataFrame(list(product(mulist, alphalist, gammalist, problist, studs)), columns=['mu', 'alpha', 'gamma', 'prob', 'studs'])
 	combs = combs[((combs['mu']+combs['alpha']+combs['gamma'])<1)]
 	interList = []
 	for _, row in combs.iterrows():
-		interList.append({'mu':float(row['mu'].astype(float)),'alpha':float(row['alpha'].astype(float)),'gamma':float(row['gamma'].astype(float)),'prob':float(row['prob'].astype(float)),'studs':int(row['studs']),'reps':reps,'questions':questions,'guessprob':guessprob})
+		interList.append({'mu':float(row['mu'].astype(float)),'alpha':float(row['alpha'].astype(float)),'gamma':float(row['gamma'].astype(float)),'prob':float(row['prob'].astype(float)),'studs':int(row['studs']),'reps':reps,'questions':questions,'guessprob':guessprob,'abilityfactor':abilityFactor})
 	
 	p = Pool()
 	r = p.map(ManageProcess, interList)
