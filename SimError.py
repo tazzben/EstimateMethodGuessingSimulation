@@ -9,6 +9,7 @@ import argparse
 from pandasql import sqldf
 from multiprocessing import Pool
 from itertools import product
+import math
 
 def GuessPre(x, prob):
 	if x['mu']==1:
@@ -92,6 +93,15 @@ def CGammaGain(x):
 	else:
 		return None		
 
+def LogisticLearn(ratio, limit, k = 5):
+	return (2*limit)/(1 + math.exp(-k*(ratio-1))) - limit
+
+def FindBounds(ratio, probability):
+	if probability > (1-probability):
+		return LogisticLearn(ratio, 1-probability)
+	else:
+		return LogisticLearn(ratio, probability)
+
 def GetStudents(mu, q, n, alpha, gamma, abilityFactor = False):
 	studentability = numpy.random.binomial(q, mu, size=n)
 	gamma = gamma/(1-mu)
@@ -102,9 +112,9 @@ def GetStudents(mu, q, n, alpha, gamma, abilityFactor = False):
 		studentid = studentid + 1
 		studentmu = student/q if abilityFactor else mu
 		knownResponses = numpy.concatenate((numpy.ones(student),numpy.zeros(q - student)))
-		studentforgot = numpy.random.binomial(student, alpha*(1-studentmu)/(1-mu))
+		studentforgot = numpy.random.binomial(student, alpha+FindBounds((1-studentmu)/(1-mu), alpha))
 		forgotResponses = numpy.concatenate((numpy.ones(studentforgot),numpy.zeros(q - studentforgot)))
-		studentlearned = numpy.random.binomial(q - student, gamma*studentmu/mu)
+		studentlearned = numpy.random.binomial(q - student, gamma+FindBounds(studentmu/mu, gamma))
 		learnedResponses = numpy.concatenate((numpy.zeros(q - studentlearned),numpy.ones(studentlearned)))
 		studentK = numpy.column_stack((knownResponses, forgotResponses, learnedResponses))
 		numpy.random.shuffle(studentK)
