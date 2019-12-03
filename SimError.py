@@ -93,14 +93,14 @@ def CGammaGain(x):
 	else:
 		return None		
 
-def LogisticLearn(ratio, limit, k = 5):
-	return (2*limit)/(1 + math.exp(-k*(ratio-1))) - limit
+def LogisticLearn(mudiff, limit, k = 5):
+	return (2*limit)/(1 + math.exp(-k*mudiff)) - limit
 
-def FindBounds(ratio, probability):
+def FindBounds(mudiff, probability):
 	if probability > (1-probability):
-		return LogisticLearn(ratio, 1-probability)
+		return LogisticLearn(mudiff, 1-probability)
 	else:
-		return LogisticLearn(ratio, probability)
+		return LogisticLearn(mudiff, probability)
 
 def GetStudents(mu, q, n, alpha, gamma, abilityFactor = False):
 	studentability = numpy.random.binomial(q, mu, size=n)
@@ -112,9 +112,9 @@ def GetStudents(mu, q, n, alpha, gamma, abilityFactor = False):
 		studentid = studentid + 1
 		studentmu = student/q if abilityFactor else mu
 		knownResponses = numpy.concatenate((numpy.ones(student),numpy.zeros(q - student)))
-		studentforgot = numpy.random.binomial(student, alpha+FindBounds((1-studentmu)/(1-mu), alpha))
+		studentforgot = numpy.random.binomial(student, alpha+FindBounds(mu-studentmu, alpha))
 		forgotResponses = numpy.concatenate((numpy.ones(studentforgot),numpy.zeros(q - studentforgot)))
-		studentlearned = numpy.random.binomial(q - student, gamma+FindBounds(studentmu/mu, gamma))
+		studentlearned = numpy.random.binomial(q - student, gamma+FindBounds(studentmu-mu, gamma))
 		learnedResponses = numpy.concatenate((numpy.zeros(q - studentlearned),numpy.ones(studentlearned)))
 		studentK = numpy.column_stack((knownResponses, forgotResponses, learnedResponses))
 		numpy.random.shuffle(studentK)
@@ -190,7 +190,7 @@ if __name__ == '__main__':
 	# gammalist = [.1,]
 	# problist = [.15,]
 	# studs = [30,]
-	# reps = 100
+	# reps = 1000
 
 	questions = 30
 	guessprob = 0.25
@@ -203,7 +203,14 @@ if __name__ == '__main__':
 		interList.append({'mu':float(row['mu'].astype(float)),'alpha':float(row['alpha'].astype(float)),'gamma':float(row['gamma'].astype(float)),'prob':float(row['prob'].astype(float)),'studs':int(row['studs']),'reps':reps,'questions':questions,'guessprob':guessprob,'abilityfactor':abilityFactor})
 	
 	p = Pool()
-	r = p.map(ManageProcess, interList)
+	r = []
+	cells = len(interList)
+	for i, result in enumerate(
+		p.imap_unordered(ManageProcess, interList)
+	):
+		r.append(result)
+		sys.stderr.write("\r{: .2f}% done".format(100 * i / cells))
+
 	p.close()
 	p.join()
 	keys = r[0].keys()
